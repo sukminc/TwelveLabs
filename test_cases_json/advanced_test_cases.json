@@ -1,0 +1,142 @@
+[
+  { "description": "AND operator requires both modalities match",
+    "query_text": "Blue Jays celebrating",
+    "search_options": ["visual", "audio"],
+    "operator": "and",
+    "expected_outcome": true
+  },
+  { "description": "OR operator broaden match",
+    "query_text": "stadium crowd",
+    "search_options": ["visual", "audio"],
+    "operator": "or",
+    "expected_outcome": true
+  },
+  { "description": "High threshold may filter borderline hits",
+    "query_text": "park playground",
+    "threshold": "high",
+    "expected_outcome": false
+  },
+  { "description": "Low threshold should include weaker matches",
+    "query_text": "park playground",
+    "threshold": "low",
+    "expected_outcome": true
+  },
+  { "description": "Group by video returns video-level aggregation",
+    "query_text": "festival",
+    "group_by": "video",
+    "expected_outcome": true
+  },
+  { "description": "Group by clip returns clip-level items",
+    "query_text": "festival parade",
+    "group_by": "clip",
+    "expected_outcome": true
+  },
+  { "description": "Page limit upper bound (50)",
+    "query_text": "concert",
+    "page_limit": 50,
+    "expected_outcome": true
+  },
+  { "description": "Page limit out of range should error",
+    "query_text": "concert",
+    "page_limit": 51,
+    "expected_outcome": "error"
+  },
+  { "description": "Filter by filename (system metadata)",
+    "query_text": "intro",
+    "filter": "{\"filename\": \"opening_ceremony.mp4\"}",
+    "expected_outcome": true
+  },
+  { "description": "Filter by duration range",
+    "query_text": "interview",
+    "filter": "{\"duration\": {\"gte\": 600, \"lte\": 900}}",
+    "expected_outcome": true
+  },
+  { "description": "Filter by video id list",
+    "query_text": "highlights",
+    "filter": "{\"id\": [\"67cec9caf45d9b64a58340fc\", \"67cec9baf45d9b64a58340fa\"]}",
+    "expected_outcome": true
+  },
+  { "description": "Invalid filter JSON should error",
+    "query_text": "anything",
+    "filter": "{invalid_json}",
+    "expected_outcome": "error"
+  },
+  { "description": "User metadata boolean filter",
+    "query_text": "needs review sample",
+    "filter": "{\"needs_review\": true}",
+    "expected_outcome": true
+  },
+  { "description": "Unsupported search option should error",
+    "query_text": "speech text",
+    "search_options": ["conversation"],
+    "expected_outcome": "error"
+  },
+  { "description": "Visual-only when index supports visual",
+    "query_text": "dog running",
+    "search_options": ["visual"],
+    "expected_outcome": true
+  },
+  { "description": "Audio-only when index supports audio",
+    "query_text": "applause",
+    "search_options": ["audio"],
+    "expected_outcome": true
+  },
+  { "description": "Empty but non-printing characters (tabs/newlines)",
+    "query_text": "\t\n  \t",
+    "expected_outcome": "error"
+  },
+  { "description": "Unicode zero-width spaces inside text",
+    "query_text": "blue\u200bjays",
+    "expected_outcome": true
+  },
+  { "description": "Unicode normalization NFC vs NFD",
+    "query_text": "한글\u1161\u11ab\u1100\u1173", 
+    "expected_outcome": true
+  },
+  { "description": "RTL script (Arabic) basic query",
+    "query_text": "مهرجان",
+    "expected_outcome": true
+  },
+  { "description": "Mixed script query",
+    "query_text": "한글 festival",
+    "expected_outcome": true
+  },
+  { "description": "URL with query string",
+    "query_text": "https://example.com/watch?v=abc123",
+    "expected_outcome": true
+  },
+  { "description": "Image search missing media param should error",
+    "query_media_type": "image",
+    "query_text": null,
+    "expected_outcome": "error"
+  },
+  { "description": "Image search with URL (if image search enabled)",
+    "query_media_type": "image",
+    "query_media_url": "https://example.com/sample.jpg",
+    "search_options": ["visual"],
+    "expected_outcome": true
+  },
+  { "description": "Invalid operator should error",
+    "query_text": "parade",
+    "operator": "xor",
+    "expected_outcome": "error"
+  },
+  { "description": "Invalid threshold should error",
+    "query_text": "parade",
+    "threshold": "ultra",
+    "expected_outcome": "error"
+  },
+  { "description": "Trim-only difference should still match",
+    "query_text": "  toddler is playing at the park\t",
+    "expected_outcome": true
+  },
+  { "description": "Multiple internal whitespace normalized",
+    "query_text": "Blue     Jays   highlights",
+    "expected_outcome": true
+  },
+  { "description": "Clip count sort via group_by video",
+    "query_text": "training session",
+    "group_by": "video",
+    "expected_outcome": true
+  }
+]
