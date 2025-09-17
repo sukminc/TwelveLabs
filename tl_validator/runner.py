@@ -86,7 +86,21 @@ def main() -> None:
     if _tk and _fd:
         try:
             _root = _tk.Tk()
-            _root.withdraw()
+            # Center an invisible parent so messageboxes/dialogs appear centered
+            try:
+                _root.update_idletasks()
+                screen_w = _root.winfo_screenwidth()
+                screen_h = _root.winfo_screenheight()
+                # create a tiny, topmost parent centered on the screen
+                x = (screen_w // 2) - 1
+                y = (screen_h // 2) - 1
+                _root.geometry(f"1x1+{x}+{y}")
+                _root.overrideredirect(True)
+                _root.attributes("-topmost", True)
+                _root.deiconify()
+            except Exception:
+                # If anything fails, fall back silently (dialogs may appear at 0,0)
+                pass
 
             # Ask the user which mode they want: Folder (Yes) or Files (No)
             choose_folder = _mb.askyesno(
