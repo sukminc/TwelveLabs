@@ -14,7 +14,27 @@ except Exception:  # pragma: no cover
     _fd = None
     _mb = None
 
+
 from tl_validator.core import extract_simple_failures, extract_progress_and_summary
+
+
+# Helper: count progress symbols
+def _count_progress_symbols(progress: str) -> dict[str, int]:
+    """
+    Count pytest progress symbols from a single-line progress bar like:
+    '...F..x.sX.... [100%]'
+    Returns a mapping of symbol -> count (e.g., {'.': 10, 'F': 1, 'x': 2, 's': 1}).
+    """
+    counts: dict[str, int] = {}
+    if not progress:
+        return counts
+    # Take only the part before the first '[' (to drop trailing percentage)
+    core = progress.split("[", 1)[0]
+    # Remove whitespace
+    core = "".join(ch for ch in core if not ch.isspace())
+    for ch in core:
+        counts[ch] = counts.get(ch, 0) + 1
+    return counts
 
 
 def _discover_paths(arg: str | None, selected_files: list[str], selected_folder: str | None) -> list[pathlib.Path]:
@@ -46,6 +66,8 @@ def _write_report(
     summary: str,
     failures: list[str],
     proc: subprocess.CompletedProcess[str],
+    symbol_counts: dict[str, int],
+    exit_code: int,
 ) -> pathlib.Path:
     ts = start.strftime("%Y%m%d_%H%M%S")
     out_path = out_dir / f"{ts}_{cases_path.name}.txt"
@@ -60,6 +82,21 @@ def _write_report(
             f.write(progress + "\n")
         if summary:
             f.write(summary + "\n")
+        f.write("\n=== SUMMARY COUNTS ===\n")
+        if symbol_counts:
+            # Print a stable, human-friendly order
+            ordered_keys = ['.', 'F', 'E', 'x', 'X', 's']
+            printed = set()
+            for k in ordered_keys:
+                if k in symbol_counts:
+                    f.write(f"{k}: {symbol_counts[k]}\n")
+                    printed.add(k)
+            for k, v in sorted(symbol_counts.items()):
+                if k not in printed:
+                    f.write(f"{k}: {v}\n")
+        else:
+            f.write("No progress symbols found\n")
+        f.write(f"Exit code: {exit_code}\n")
         f.write("\n=== SIMPLE FAILURES ===\n")
         if failures:
             for msg in failures:
@@ -158,13 +195,31 @@ def main() -> None:
         progress, summary = extract_progress_and_summary(proc.stdout or "")
         end = _dt.datetime.now()
 
+        symbol_counts = _count_progress_symbols(progress)
+        exit_code = proc.returncode
+
         # Echo compact lines to terminal
         if progress:
             print(progress)
         if summary:
             print(summary)
 
-        out_path = _write_report(out_dir, cases_path, start, end, progress, summary, failures, proc)
+        if symbol_counts:
+            compact = " ".join(f"{k}={v}" for k, v in sorted(symbol_counts.items()))
+            print(f"Counts: {compact} | Exit code: {exit_code}")
+
+        out_path = _write_report(
+            out_dir,
+            cases_path,
+            start,
+            end,
+            progress,
+            summary,
+            failures,
+            proc,
+            symbol_counts,
+            exit_code,
+        )
         print(f"Saved results to {out_path}")
         reports.append(out_path)
 

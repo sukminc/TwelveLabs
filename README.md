@@ -63,6 +63,13 @@ This project provides a pytest-based validation suite and a standalone runner to
    - No → select one or more `.json` files.
    - Reports are written into `validation_results/`.
 
+**Result Symbols Explained**
+- `.` → Test passed
+- `F` → Test failed (assertion did not match expected outcome)
+- `x` → Expected fail (test marked xfail and failed as expected)
+- `X` → Unexpected pass (test marked xfail but actually passed)
+- `s` → Skipped (test was skipped intentionally)
+
 **Example Output**
 
 ```
