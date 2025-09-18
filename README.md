@@ -142,7 +142,22 @@ Optional fields: `query_media_type`, `query_media_url`, `filter`, etc.
 
 ---
 
+
 ## 🛠 Development Notes
 - Code style: flake8 compliant.
 - Logic split into core, tests, and runner for clarity.
 - GUI runner supports both file and folder selection.
+
+---
+
+## 📈 Roadmap
+
+### ✅ Completed (Phase 1)
+- Implemented pytest-based validation suite and standalone runner (GUI/CLI).
+- Added documentation for pytest result symbols.
+- Reports include summary counts and exit codes.
+- Stable MVP tested and flake8 compliant.
+
+### 🚀 Future Plans
+- Phase 2: Enhanced reporting (HTML/Markdown), CI/CD integration, flexible config.
+- Phase 3: Dashboard UI for visualization, notification integrations, plugin system.
