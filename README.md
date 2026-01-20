@@ -1,163 +1,192 @@
 # TwelveLabs Search API Validation Tool
 
-This project provides a pytest-based validation suite and a standalone runner to test the TwelveLabs Search API through its Python SDK. It is built for data-driven validation, ensuring reliable performance, robust error handling, and reproducible results across different query scenarios.
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Pytest](https://img.shields.io/badge/pytest-7.0+-green.svg)](https://docs.pytest.org/)
+[![Code Style: Flake8](https://img.shields.io/badge/code%20style-flake8-black.svg)](https://flake8.pycqa.org/)
+
+> **Architected for Reliability:** A data-driven validation framework ensuring the integrity of TwelveLabs' multimodal video search capabilities via their Python SDK.
+
+This project provides a comprehensive **pytest-based validation suite** and a **custom standalone GUI runner** to test the TwelveLabs Search API. It is designed to simulate real-world usage patterns, validate edge cases (fuzzy matching, internationalization), and enforce rigorous data integrity checks.
 
 ---
 
-## 📋 Overview
-- **Automated Validation**  
-  Run test cases defined in JSON files (`test_cases_json/*.json`) against a real TwelveLabs index.
-- **Flexible Execution**
-  - Run tests directly with pytest.
-  - Or use the standalone runner with a GUI file/folder picker.
-- **Comprehensive Coverage**
-  - Common queries, plurals, case variations, and fuzzy matches.
-  - Edge cases (punctuation, emojis, whitespace, special characters).
-  - Internationalization (Korean, Japanese, Arabic, etc.).
-  - Boundary and invalid inputs (empty, whitespace-only, long strings).
-  - Optional index-dependent filters and image search.
-- **Smart Reporting**
-  - Compact pytest progress lines.
-  - Timestamped `.txt` reports in `validation_results/`.
-  - Simple one-line failure summaries.
-  - Optional full stdout/stderr inclusion.
+## 📋 Key Features
+
+### 🔍 Automated Data-Driven Validation
+- **JSON-Driven Architecture:** Decouples test logic from test data, allowing non-technical stakeholders to define scenarios in `test_cases_json/` without touching code.
+- **Dynamic Assertions:** automatically classifies expected outcomes (Boolean hits vs. Error states).
+
+### 🛠 Flexible Execution Models
+- **CLI Standard Mode:** Native `pytest` integration for CI/CD pipelines.
+- **GUI Standalone Runner:** A custom Tkinter-based runner allowing batch execution via file/folder selection for ad-hoc testing.
+
+### 🌍 Comprehensive Test Coverage
+- **Linguistic Robustness:** Validates plurals, case variations, and fuzzy matching.
+- **Internationalization (i18n):** Verified support for Korean, Japanese, Arabic, and other non-Latin scripts.
+- **Edge Case Handling:** Punctuation, emojis, whitespace-only queries, and injection attempts.
+- **Multimedia Support:** Optional toggles for Image-to-Video search validation.
+
+### 📊 Smart Reporting System
+- **Timestamped Artifacts:** Auto-generates detailed `.txt` reports in `validation_results/` for audit trails.
+- **Summary Metrics:** Provides instant pass/fail counts and exit codes for pipeline integration.
+- **Debug-Friendly:** Options to capture full `stdout`/`stderr` for deep-dive root cause analysis.
 
 ---
 
-## 🚀 Setup
-1. **Get Credentials**
-   - Sign up at Twelve Labs Playground.
-   - Obtain your API Key and create an Index ID with at least one video uploaded.
-2. **Configure Environment**  
-   Create a `.env` in the project root:
+## 🚀 Getting Started
 
-   ```env
-   TWELVE_LABS_API_KEY="your_api_key_here"
-   TWELVE_LABS_INDEX_ID="your_index_id_here"
-   ```
+### Prerequisites
+- Python 3.9 or higher
+- A TwelveLabs API Key and Index ID (Sign up at the [TwelveLabs Playground](https://playground.twelvelabs.io/))
 
-3. **Install Dependencies**
+### Installation
 
-   ```sh
-   python3 -m venv .venv
-   source .venv/bin/activate
-   pip install -r requirements.txt
-   ```
+1.  **Clone the repository**
+    ```sh
+    git clone [https://github.com/sukminc/TwelveLabs.git](https://github.com/sukminc/TwelveLabs.git)
+    cd TwelveLabs
+    ```
+
+2.  **Set up the environment**
+    Create a `.env` file in the project root:
+    ```env
+    TWELVE_LABS_API_KEY="your_api_key_here"
+    TWELVE_LABS_INDEX_ID="your_index_id_here"
+    ```
+
+3.  **Install Dependencies**
+    ```sh
+    python3 -m venv .venv
+    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+    pip install -r requirements.txt
+    ```
 
 ---
 
-## ▶️ Running Tests
+## ▶️ Usage Guide
 
-1. **Run via Pytest**
+### 1. Standard Pytest Execution (CLI)
+Ideal for CI/CD pipelines or quick sanity checks.
 
-   ```sh
-   pytest -q
-   ```
-
-2. **Run via Runner (GUI/CLI)**
-
-   ```sh
-   python -m tl_validator.runner
-   ```
-   - Yes → select a folder (all `.json` inside will run).
-   - No → select one or more `.json` files.
-   - Reports are written into `validation_results/`.
-
-**Result Symbols Explained**
-- `.` → Test passed
-- `F` → Test failed (assertion did not match expected outcome)
-- `x` → Expected fail (test marked xfail and failed as expected)
-- `X` → Unexpected pass (test marked xfail but actually passed)
-- `s` → Skipped (test was skipped intentionally)
-
-**Example Output**
+```sh
+pytest -q
 
 ```
-.......xxxx.......x..........                                            [100%]
-Saved results to validation_results/20250916_151201_advanced_test_cases.json.txt
-FFFFFF.FFFFF.FFFFFFFFF.F..FFs                                            [100%]
-Saved results to validation_results/20250916_151213_negative_test_cases.json.txt
+
+### 2. Standalone Runner (GUI/Batch)
+
+Best for testing specific datasets or running extensive regression suites.
+
+```sh
+python -m tl_validator.runner
+
 ```
+
+* **Prompt:** "Do you want to run all JSON files in a folder?"
+* **Yes:** Opens a folder picker to run batch tests.
+* **No:** Opens a file picker to select specific `.json` test definitions.
+
+
 
 ---
 
-## ⚙️ Environment Toggles
-- `TL_REAL_FILTERS=1` → enable index-specific filter/metadata tests.
-- `TL_IMAGE_URL=1` → enable image URL tests.
-- `TL_INCLUDE_FULL_OUTPUT=1` → include full pytest stdout/stderr in reports.
-- `TL_CASES_FILE=/path/to/file.json` → override test case file (used internally by runner).
+## 🧪 Test Case Definitions
 
----
+Test scenarios are defined in strictly typed JSON files located in `test_cases_json/`.
 
-## 📂 Project Structure
-
-```
-TwelveLabs/
-├─ tl_validator/
-│  ├─ core.py        # helpers, defaults, classify/assert logic
-│  └─ runner.py      # GUI/CLI batch runner
-├─ tests/
-│  └─ test_search.py # pytest test suite
-├─ test_cases_json/  # JSON files defining test cases
-├─ validation_results/ # auto-generated reports
-├─ requirements.txt
-└─ README.md
-```
-
----
-
-## 🧪 Test Case Format
-
-Each case is a JSON object with:
+**Example `simple_noun.json`:**
 
 ```json
 {
-  "description": "Simple noun",
-  "query_text": "dog",
-  "expected_outcome": true
+  "description": "Basic semantic search for objects",
+  "query_text": "Golden Retriever",
+  "expected_outcome": true,
+  "filter": {
+      "duration": { "gte": 10 }
+  }
 }
+
 ```
 
-- `expected_outcome` can be:
-  - `true` → expect ≥1 hit
-  - `false` → expect 0 hits
-  - `"error"` → expect client/validation error
-
-Optional fields: `query_media_type`, `query_media_url`, `filter`, etc.
-
----
-
-## 📊 Reports
-- Saved in `validation_results/` as:
-
-  ```
-  YYYYMMDD_HHMMSS_<cases_filename>.txt
-  ```
-
-- Contain:
-  - Start/end timestamps
-  - Progress and summary lines
-  - Simple failure messages
-  - (Optional) full pytest output
+| Field | Type | Description |
+| --- | --- | --- |
+| `description` | `str` | Human-readable context for the test case. |
+| `query_text` | `str` | The actual search query sent to the API. |
+| `expected_outcome` | `bool | "error"` | `true` (≥1 hit), `false` (0 hits), or `"error"` (API should reject). |
+| `filter` | `dict` | (Optional) Metadata filters to apply. |
 
 ---
 
+## ⚙️ Advanced Configuration
 
-## 🛠 Development Notes
-- Code style: flake8 compliant.
-- Logic split into core, tests, and runner for clarity.
-- GUI runner supports both file and folder selection.
+Control test behaviour using environment variables:
+
+* `TL_REAL_FILTERS=1`: Enable tests that require specific metadata in your index.
+* `TL_IMAGE_URL=1`: Enable Image-to-Video search tests (requires valid image URLs).
+* `TL_INCLUDE_FULL_OUTPUT=1`: Append full Pytest `stdout`/`stderr` to the report files.
+* `TL_CASES_FILE=/path/to/custom.json`: Override the default test source programmatically.
+
+---
+
+## 📂 Project Architecture
+
+```
+TwelveLabs/
+├── tl_validator/           # Core Framework Logic
+│   ├── core.py             # Heuristics, classifiers, and assertion logic
+│   └── runner.py           # GUI & CLI Batch Orchestrator
+├── tests/
+│   └── test_search.py      # Pytest entry point
+├── test_cases_json/        # Data-driven test definitions
+├── validation_results/     # Automated report artifacts
+├── .env                    # Secrets (Excluded from Git)
+└── requirements.txt        # Dependency manifest
+
+```
+
+---
+
+## 📊 Reporting & result Analysis
+
+Results are saved to `validation_results/YYYYMMDD_HHMMSS_<filename>.txt`.
+
+**Result Symbols:**
+
+* `.` : **Pass** (Assertion met)
+* `F` : **Fail** (Assertion mismatch)
+* `x` : **XFail** (Known issue/Expected failure)
+* `s` : **Skip** (Test skipped via config)
+
+**Sample Report Output:**
+
+```text
+Test Suite: advanced_test_cases.json
+Status: COMPLETED
+--------------------------------------------------
+.......xxxx.......x.......... [100%]
+--------------------------------------------------
+Total: 30 | Passed: 25 | Failed: 0 | XFailed: 5
+Report generated at: 2025-09-16 15:12:01
+
+```
 
 ---
 
 ## 📈 Roadmap
 
-### ✅ Completed (Phase 1)
-- Implemented pytest-based validation suite and standalone runner (GUI/CLI).
-- Added documentation for pytest result symbols.
-- Reports include summary counts and exit codes.
-- Stable MVP tested and flake8 compliant.
+* [x] **Phase 1 (MVP):** Pytest suite, GUI Runner, and Basic Reporting.
+* [ ] **Phase 2 (CI/CD):** Jenkins/GitHub Actions integration templates.
+* [ ] **Phase 3 (Visualization):** HTML Dashboard for historic trend analysis.
 
-### 🚀 Future Plans
-- Phase 2: Enhanced reporting (HTML/Markdown), CI/CD integration, flexible config.
-- Phase 3: Dashboard UI for visualization, notification integrations, plugin system.
+---
+
+## 👤 Author
+
+**Chris (Suk Min) Yoon**
+
+* **Portfolio:** [github.com/sukminc](https://www.google.com/search?q=https://github.com/sukminc)
+* **Role:** Lead QA Automation Engineer / Data Quality Specialist
+
+```
+
+```
