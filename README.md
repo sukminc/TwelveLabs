@@ -186,7 +186,3 @@ Report generated at: 2025-09-16 15:12:01
 
 * **Portfolio:** [github.com/sukminc](https://www.google.com/search?q=https://github.com/sukminc)
 * **Role:** Lead QA Automation Engineer / Data Quality Specialist
-
-```
-
-```
