@@ -1,32 +1,38 @@
 # CLAUDE.md — TwelveLabs API Validator
 
-## Brand Hub
-**onepercentbetter.poker** — this project is listed there as `TwelveLabs API Validator`.
-If it's removed from the site, it's no longer a brand asset.
-Owner: Chris S. Yoon · github.com/sukminc
+## Repo Role
 
-## What this is
-JSON-driven validation suite for the TwelveLabs multimodal video search API.
-Status: `live` (100% MVP)
-Slug on hub: `twelvelabs-validator` · Repo: `sukminc/TwelveLabs`
+Archive proof-of-work repo for API validation and test framework design.
 
-## Core Value
-Production-quality test framework — decouples test logic from test data.
-Demonstrates observability mindset: validate at the boundary, surface all edge cases.
+This repo is not part of the poker hub.
+Its value is showing clear validation engineering:
 
-## Stack
-- Python + Pytest
-- TwelveLabs SDK
+- JSON-defined test cases
+- reusable validation core
+- edge-case coverage
+- report generation
 
-## Key Architecture
-- JSON-driven: test cases defined as data, not hardcoded in test functions
-- Covers linguistic edge cases: plurals, i18n (Korean/Japanese/Arabic)
-- Fuzzy matching + injection attempt coverage
-- Built to production observability standard, not throwaway scripts
+## Guardrails
+
+- Keep the repo framed as a validation framework, not a generic script bundle.
+- Preserve the test-data-separate-from-test-logic pattern.
+- Do not overcomplicate the story beyond observable API behavior and framework design.
+
+## Current Truth
+
+Trust `README.md` for implementation details and usage.
+
+Primary signal:
+
+- boundary validation
+- data-driven test definitions
+- multilingual and fuzzy-match coverage
+- reusable runner outputs
 
 ## Commands
+
 ```bash
 pip install -r requirements.txt
-pytest                         # run full suite
-pytest -v tests/               # verbose
+pytest
+pytest -v tests/
 ```
